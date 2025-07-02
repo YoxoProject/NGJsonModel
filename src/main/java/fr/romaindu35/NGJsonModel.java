@@ -3,6 +3,7 @@ package fr.romaindu35;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import fr.romaindu35.model.EnterpriseData;
 import fr.romaindu35.model.SkillData;
 
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +22,23 @@ public class NGJsonModel {
             .registerTypeAdapter(SkillData.PlayerSkillData.class, new SkillData.PlayerSkillData.Deserializer())
             .registerTypeAdapter(SkillData.class, new SkillData.Serializer())
             .registerTypeAdapter(SkillData.class, new SkillData.Deserializer())
+
+            .registerTypeAdapter(EnterpriseData.class, new EnterpriseData.Serializer())
+            .registerTypeAdapter(EnterpriseData.class, new EnterpriseData.Deserializer())
+            .registerTypeAdapter(EnterpriseData.Enterprise.class, new EnterpriseData.Enterprise.Serializer())
+            .registerTypeAdapter(EnterpriseData.Enterprise.class, new EnterpriseData.Enterprise.Deserializer())
+            .registerTypeAdapter(EnterpriseData.Permission.class, new EnterpriseData.Permission.Serializer())
+            .registerTypeAdapter(EnterpriseData.Permission.class, new EnterpriseData.Permission.Deserializer())
+            .registerTypeAdapter(EnterpriseData.EnterpriseBet.Bet.class, new EnterpriseData.EnterpriseBet.Bet.Serializer())
+            .registerTypeAdapter(EnterpriseData.EnterpriseBet.Bet.class, new EnterpriseData.EnterpriseBet.Bet.Deserializer())
+            .registerTypeAdapter(EnterpriseData.EnterpriseParcelle.Parcelle.class, new EnterpriseData.EnterpriseParcelle.Parcelle.Serializer())
+            .registerTypeAdapter(EnterpriseData.EnterpriseParcelle.Parcelle.class, new EnterpriseData.EnterpriseParcelle.Parcelle.Deserializer())
+            .registerTypeAdapter(EnterpriseData.EnterpriseParcelle.Coords.class, new EnterpriseData.EnterpriseParcelle.Coords.Serializer())
+            .registerTypeAdapter(EnterpriseData.EnterpriseParcelle.Coords.class, new EnterpriseData.EnterpriseParcelle.Coords.Deserializer())
+            .registerTypeAdapter(EnterpriseData.EnterpriseBank.class, new EnterpriseData.EnterpriseBank.Serializer())
+            .registerTypeAdapter(EnterpriseData.EnterpriseBank.class, new EnterpriseData.EnterpriseBank.Deserializer())
+            .registerTypeAdapter(EnterpriseData.EnterpriseBank.Log.class, new EnterpriseData.EnterpriseBank.Log.Serializer())
+            .registerTypeAdapter(EnterpriseData.EnterpriseBank.Log.class, new EnterpriseData.EnterpriseBank.Log.Deserializer())
             .create();
 
     public static <T> T loadObjectFromJson(Path path, Class<T> clazz) throws IOException {
