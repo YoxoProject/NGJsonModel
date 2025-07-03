@@ -4,10 +4,7 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class EnterpriseData {
 
@@ -68,6 +65,53 @@ public class EnterpriseData {
             String server = obj.get("s").getAsString();
             List<Enterprise> enterprises = obj.has("e") ? context.<List<Enterprise>>deserialize(obj.get("e"), new TypeToken<List<Enterprise>>() {}.getType()) : new ArrayList<Enterprise>();
             return new EnterpriseData(timestamp, server, enterprises);
+        }
+    }
+
+    /**
+     * Permet de compacter les historique pour alléger le JSON.
+     * Il utilise un format compact où :
+     * - "l" est la longueur de l'historique (nombre de dates)
+     * - "f" est la première date de l'historique (au format "yyyy-MM-dd")
+     * - "v" est un tableau des valeurs associées à chaque date, dans l'ordre chronologique.
+     */
+    public static class CompactHistoryAdapter implements JsonSerializer<Map<String, Double>>, JsonDeserializer<Map<String, Double>> {
+        @Override
+        public JsonElement serialize(Map<String, Double> src, Type typeOfSrc, JsonSerializationContext context) {
+            if (src == null || src.isEmpty()) return new JsonObject();
+            List<String> dates = new ArrayList<>(src.keySet());
+            Collections.sort(dates);
+            JsonObject obj = new JsonObject();
+            obj.addProperty("l", dates.size());
+            obj.addProperty("f", dates.get(0));
+            JsonArray arr = new JsonArray();
+            for (String d : dates) arr.add(src.get(d));
+            obj.add("v", arr);
+            return obj;
+        }
+
+        @Override
+        public Map<String, Double> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            if (!json.isJsonObject()) return new HashMap<>();
+            JsonObject obj = json.getAsJsonObject();
+            if (!obj.has("l") || !obj.has("f") || !obj.has("v")) return new HashMap<>();
+            int l = obj.get("l").getAsInt();
+            String first = obj.get("f").getAsString();
+            JsonArray arr = obj.getAsJsonArray("v");
+            Map<String, Double> map = new TreeMap<>();
+            Calendar date = Calendar.getInstance();
+            try {
+                Date parsedDate = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(first);
+                date.setTime(parsedDate);
+            } catch (java.text.ParseException e) {
+                return new HashMap<>();
+            }
+            for (int i = 0; i < l && i < arr.size(); i++) {
+                String dateStr = new java.text.SimpleDateFormat("yyyy-MM-dd").format(date.getTime());
+                map.put(dateStr, arr.get(i).getAsDouble());
+                date.add(Calendar.DATE, 1);
+            }
+            return map;
         }
     }
 
@@ -281,7 +325,7 @@ public class EnterpriseData {
                 }
                 if (src instanceof EnterpriseCasino) {
                     EnterpriseCasino src_casino = (EnterpriseCasino) src;
-                    obj.add("h", context.serialize(src_casino.history));
+                    obj.add("h", new CompactHistoryAdapter().serialize(src_casino.history, null, context));
                     if (src_casino.benefAverage != 0) obj.addProperty("ba", src_casino.benefAverage);
                     if (src_casino.totalPlay != 0) obj.addProperty("tp", src_casino.totalPlay);
                     if (src_casino.winPercent != 0) obj.addProperty("wp", src_casino.winPercent);
@@ -298,12 +342,16 @@ public class EnterpriseData {
                     if (src_electric.price != 0) obj.addProperty("pr", src_electric.price);
                     if (src_electric.priceAverage != 0) obj.addProperty("pa", src_electric.priceAverage);
                     if (!src_electric.countriesSell.isEmpty()) obj.add("ct", context.serialize(src_electric.countriesSell));
-                    obj.add("hg", context.serialize(src_electric.historyGenerated));
-                    obj.add("hc", context.serialize(src_electric.historyCollected));
+                    obj.add("hg", new CompactHistoryAdapter().serialize(src_electric.historyGenerated, null, context));
+                    obj.add("hc", new CompactHistoryAdapter().serialize(src_electric.historyCollected, null, context));
                 }
                 if (src instanceof EnterpriseFarm) {
                     EnterpriseFarm src_farm = (EnterpriseFarm) src;
-                    obj.add("h", context.serialize(src_farm.histories));
+                    JsonObject historiesObj = new JsonObject();
+                    for (Map.Entry<String, Map<String, Double>> entry : src_farm.histories.entrySet()) {
+                        historiesObj.add(entry.getKey(), new CompactHistoryAdapter().serialize(entry.getValue(), null, context));
+                    }
+                    obj.add("h", historiesObj);
                     if (src_farm.totalCollected != 0) obj.addProperty("tc", src_farm.totalCollected);
                     if (src_farm.todayCollected != 0) obj.addProperty("td", src_farm.todayCollected);
                     if (!src_farm.collectedCereal.isEmpty()) obj.add("cc", context.serialize(src_farm.collectedCereal));
@@ -314,8 +362,8 @@ public class EnterpriseData {
                 }
                 if (src instanceof EnterprisePetrol) {
                     EnterprisePetrol src_petrol = (EnterprisePetrol) src;
-                    obj.add("hg", context.serialize(src_petrol.historyGenerated));
-                    obj.add("hc", context.serialize(src_petrol.historyCollected));
+                    obj.add("hg", new CompactHistoryAdapter().serialize(src_petrol.historyGenerated, null, context));
+                    obj.add("hc", new CompactHistoryAdapter().serialize(src_petrol.historyCollected, null, context));
                     if (src_petrol.total != 0) obj.addProperty("t", src_petrol.total);
                     if (src_petrol.available != 0) obj.addProperty("av", src_petrol.available);
                     if (src_petrol.allowCountry) obj.addProperty("ac", true); // Le false, on ne le met pas pour alléger le JSON
@@ -327,7 +375,7 @@ public class EnterpriseData {
                 }
                 if (src instanceof EnterpriseTrader) {
                     EnterpriseTrader src_trader = (EnterpriseTrader) src;
-                    obj.add("h", context.serialize(src_trader.history));
+                    obj.add("h", new CompactHistoryAdapter().serialize(src_trader.history, null, context));
                     if (src_trader.totalGenerated != 0) obj.addProperty("tg", src_trader.totalGenerated);
                     if (src_trader.todayPercent != 0) obj.addProperty("tp", src_trader.todayPercent);
                     if (src_trader.sumInvestment != 0) obj.addProperty("si", src_trader.sumInvestment);
@@ -373,7 +421,7 @@ public class EnterpriseData {
                         return new EnterpriseBet(base, bets, brr, bt, ba);
                     }
                     case CASINO: {
-                        Map<String, Double> history = context.deserialize(obj.get("h"), new TypeToken<Map<String, Double>>() {}.getType());
+                        Map<String, Double> history = new CompactHistoryAdapter().deserialize(obj.get("h"), null, context);
                         Double benefAverage = obj.has("ba") ? obj.get("ba").getAsDouble() : 0.0;
                         Double totalPlay = obj.has("tp") ? obj.get("tp").getAsDouble() : 0.0;
                         Double winPercent = obj.has("wp") ? obj.get("wp").getAsDouble() : 0.0;
@@ -390,12 +438,18 @@ public class EnterpriseData {
                         Double price = obj.has("pr") ? obj.get("pr").getAsDouble() : 0.0;
                         Double priceAverage = obj.has("pa") ? obj.get("pa").getAsDouble() : 0.0;
                         Map<String, Double> countriesSell = obj.has("ct") ? (Map<String, Double>) context.deserialize(obj.get("ct"), new TypeToken<Map<String, Double>>() {}.getType()) : new HashMap<String, Double>();
-                        Map<String, Double> historyGenerated = context.deserialize(obj.get("hg"), new TypeToken<Map<String, Double>>() {}.getType());
-                        Map<String, Double> historyCollected = context.deserialize(obj.get("hc"), new TypeToken<Map<String, Double>>() {}.getType());
+                        Map<String, Double> historyGenerated = new CompactHistoryAdapter().deserialize(obj.get("hg"), null, context);
+                        Map<String, Double> historyCollected = new CompactHistoryAdapter().deserialize(obj.get("hc"), null, context);
                         return new EnterpriseElectric(base, total, available, allowCountry, allowAlly, allowAll, associatedCountry, price, priceAverage, countriesSell, historyGenerated, historyCollected);
                     }
                     case FARM: {
-                        Map<String, Map<String, Double>> histories = context.deserialize(obj.get("h"), new TypeToken<Map<String, Map<String, Double>>>() {}.getType());
+                        Map<String, Map<String, Double>> histories = new TreeMap<>();
+                        JsonObject historiesObj = obj.getAsJsonObject("h");
+                        for (Map.Entry<String, JsonElement> entry : historiesObj.entrySet()) {
+                            String cerealType = entry.getKey();
+                            Map<String, Double> history = new CompactHistoryAdapter().deserialize(entry.getValue(), null, context);
+                            histories.put(cerealType, history);
+                        }
                         Integer totalCollected = obj.has("tc") ? obj.get("tc").getAsInt() : 0;
                         Integer todayCollected = obj.has("td") ? obj.get("td").getAsInt() : 0;
                         Map<String, Integer> collectedCereal = obj.has("cc") ? (Map<String, Integer>) context.deserialize(obj.get("cc"), new TypeToken<Map<String, Integer>>() {}.getType()) : new HashMap<String, Integer>();
@@ -406,8 +460,8 @@ public class EnterpriseData {
                         return new EnterpriseParcelle(base, parcelles);
                     }
                     case PETROL: {
-                        Map<String, Double> historyGenerated = context.deserialize(obj.get("hg"), new TypeToken<Map<String, Double>>() {}.getType());
-                        Map<String, Double> historyCollected = context.deserialize(obj.get("hc"), new TypeToken<Map<String, Double>>() {}.getType());
+                        Map<String, Double> historyGenerated = new CompactHistoryAdapter().deserialize(obj.get("hg"), null, context);
+                        Map<String, Double> historyCollected = new CompactHistoryAdapter().deserialize(obj.get("hc"), null, context);
                         Integer total = obj.has("t") ? obj.get("t").getAsInt() : 0;
                         Integer available = obj.has("av") ? obj.get("av").getAsInt() : 0;
                         boolean allowCountry = obj.has("ac") && obj.get("ac").getAsBoolean();
@@ -419,7 +473,7 @@ public class EnterpriseData {
                         return new EnterprisePetrol(base, historyGenerated, historyCollected, total, available, allowCountry, allowAlly, allowAll, associatedCountry, price, priceAverage);
                     }
                     case TRADER: {
-                        Map<String, Double> history = context.deserialize(obj.get("h"), new TypeToken<Map<String, Double>>(){}.getType());
+                        Map<String, Double> history = new CompactHistoryAdapter().deserialize(obj.get("h"), null, context);
                         Integer totalGenerated = obj.has("tg") ? obj.get("tg").getAsInt() : 0;
                         Integer todayPercent = obj.has("tp") ? obj.get("tp").getAsInt() : 0;
                         Float sumInvestment = obj.has("si") ? obj.get("si").getAsFloat() : 0f;
