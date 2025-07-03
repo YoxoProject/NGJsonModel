@@ -85,8 +85,26 @@ public class EnterpriseData {
             obj.addProperty("l", dates.size());
             obj.addProperty("f", dates.get(0));
             JsonArray arr = new JsonArray();
-            for (String d : dates) arr.add(src.get(d));
-            obj.add("v", arr);
+            for (String d : dates) {
+                if ((double) src.get(d).intValue() == src.get(d)) {
+                    arr.add(new JsonPrimitive(src.get(d).intValue()));
+                } else {
+                    arr.add(new JsonPrimitive(src.get(d)));
+                }
+            }
+            // On enlève tous les 0.0 à la fin de l'array pour alléger le JSON. Par exemple, [1.0, 2.0, 3.0, 0.0, 0.0] devient [1.0, 2.0, 3.0]
+            // On est obligé de faire ce code "sale" car Gson 2.2.2 (Fixé par NG)
+            int newSize = arr.size();
+            while (newSize > 0 && arr.get(newSize - 1).getAsDouble() == 0.0) {
+                newSize--;
+            }
+            if (newSize > 0) {
+                JsonArray trimmed = new JsonArray();
+                for (int i = 0; i < newSize; i++) {
+                    trimmed.add(arr.get(i));
+                }
+                obj.add("v", trimmed);
+            }
             return obj;
         }
 
@@ -94,10 +112,10 @@ public class EnterpriseData {
         public Map<String, Double> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             if (!json.isJsonObject()) return new HashMap<>();
             JsonObject obj = json.getAsJsonObject();
-            if (!obj.has("l") || !obj.has("f") || !obj.has("v")) return new HashMap<>();
+            if (!obj.has("l") || !obj.has("f")) return new HashMap<>();
             int l = obj.get("l").getAsInt();
             String first = obj.get("f").getAsString();
-            JsonArray arr = obj.getAsJsonArray("v");
+            JsonArray arr = obj.has("v") ? obj.getAsJsonArray("v") : new JsonArray();
             Map<String, Double> map = new TreeMap<>();
             Calendar date = Calendar.getInstance();
             try {
@@ -106,9 +124,9 @@ public class EnterpriseData {
             } catch (java.text.ParseException e) {
                 return new HashMap<>();
             }
-            for (int i = 0; i < l && i < arr.size(); i++) {
+            for (int i = 0; i < l; i++) {
                 String dateStr = new java.text.SimpleDateFormat("yyyy-MM-dd").format(date.getTime());
-                map.put(dateStr, arr.get(i).getAsDouble());
+                map.put(dateStr, i < arr.size() ? arr.get(i).getAsDouble() : 0.0);
                 date.add(Calendar.DATE, 1);
             }
             return map;
@@ -538,9 +556,9 @@ public class EnterpriseData {
             public JsonElement serialize(Permission src, Type type, JsonSerializationContext context) {
                 JsonObject obj = new JsonObject();
                 obj.addProperty("n", src.name);
-                if (src.owner) obj.addProperty("o", true);
-                if (src.cadre) obj.addProperty("c", true);
-                if (src.employee) obj.addProperty("e", true);
+                if (src.owner) obj.addProperty("o", 1);
+                if (src.cadre) obj.addProperty("c", 1);
+                if (src.employee) obj.addProperty("e", 1);
                 return obj;
             }
         }
@@ -550,9 +568,9 @@ public class EnterpriseData {
             public Permission deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
                 JsonObject obj = json.getAsJsonObject();
                 String name = obj.get("n").getAsString();
-                boolean owner = obj.has("o") && obj.get("o").getAsBoolean(); // Normalement toujours true, mais je préfère le vérifier
-                boolean cadre = obj.has("c") && obj.get("c").getAsBoolean();
-                boolean employee = obj.has("e") && obj.get("e").getAsBoolean();
+                boolean owner = obj.has("o") && obj.get("o").getAsInt() == 1; // Normalement toujours 1 si présent, mais je préfère le vérifier
+                boolean cadre = obj.has("c") && obj.get("c").getAsInt() == 1;
+                boolean employee = obj.has("e") && obj.get("e").getAsInt() == 1;
                 return new Permission(name, owner, cadre, employee);
             }
         }
