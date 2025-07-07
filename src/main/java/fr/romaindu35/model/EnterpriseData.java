@@ -6,7 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.*;
 
-public class EnterpriseData {
+public class EnterpriseData implements BaseData {
 
     private Long timestamp;
     private String server;
@@ -18,10 +18,12 @@ public class EnterpriseData {
         this.enterprises = enterprises;
     }
 
+    @Override
     public Long getTimestamp() {
         return timestamp;
     }
 
+    @Override
     public String getServer() {
         return server;
     }

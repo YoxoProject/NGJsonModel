@@ -6,7 +6,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SkillData {
+public class SkillData implements BaseData {
 
     private final Long timestamp;
     private final String server;
@@ -18,10 +18,12 @@ public class SkillData {
         this.skills = skills;
     }
 
+    @Override
     public Long getTimestamp() {
         return timestamp;
     }
 
+    @Override
     public String getServer() {
         return server;
     }

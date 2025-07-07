@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'fr.romaindu35'
-version = '1.0.3'
+version = '1.0.4'
 
 // Chargement des variables d'environnement
 def envFile = file('.env')

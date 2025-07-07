@@ -7,7 +7,7 @@ import java.util.Map;
  *
  * Pour pricesTexture, salesTexture et stocksTexture, il s'agit des graphiques générés par le serveur et encodés en Base64.
  */
-public class CerealGlobalMarketData {
+public class CerealGlobalMarketData implements BaseData {
 
     private final String server;
     private final Long timestamp;
@@ -33,10 +33,12 @@ public class CerealGlobalMarketData {
         this.cerealsPrice = cerealsPrice;
     }
 
+    @Override
     public String getServer() {
         return server;
     }
 
+    @Override
     public Long getTimestamp() {
         return timestamp;
     }
