@@ -77,4 +77,8 @@ public class NGJsonModel {
         String json = gson.toJson(object);
         Files.write(path, json.getBytes(StandardCharsets.UTF_8));
     }
+
+    public static Gson getGson() {
+        return gson;
+    }
 }
