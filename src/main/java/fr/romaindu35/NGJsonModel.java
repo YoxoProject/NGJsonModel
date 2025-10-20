@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import fr.romaindu35.model.EnterpriseData;
+import fr.romaindu35.model.PlayerListData;
 import fr.romaindu35.model.SkillData;
 
 import java.io.IOException;
@@ -22,6 +23,11 @@ public class NGJsonModel {
             .registerTypeAdapter(SkillData.PlayerSkillData.class, new SkillData.PlayerSkillData.Deserializer())
             .registerTypeAdapter(SkillData.class, new SkillData.Serializer())
             .registerTypeAdapter(SkillData.class, new SkillData.Deserializer())
+
+            .registerTypeAdapter(PlayerListData.PlayerData.class, new PlayerListData.PlayerData.Serializer())
+            .registerTypeAdapter(PlayerListData.PlayerData.class, new PlayerListData.PlayerData.Deserializer())
+            .registerTypeAdapter(PlayerListData.class, new PlayerListData.Serializer())
+            .registerTypeAdapter(PlayerListData.class, new PlayerListData.Deserializer())
 
             .registerTypeAdapter(EnterpriseData.class, new EnterpriseData.Serializer())
             .registerTypeAdapter(EnterpriseData.class, new EnterpriseData.Deserializer())
