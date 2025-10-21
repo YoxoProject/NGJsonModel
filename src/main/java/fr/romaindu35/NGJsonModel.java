@@ -3,6 +3,7 @@ package fr.romaindu35;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import fr.romaindu35.compression.Compressor;
 import fr.romaindu35.model.EnterpriseData;
 import fr.romaindu35.model.PlayerListData;
 import fr.romaindu35.model.SkillData;
@@ -48,40 +49,72 @@ public class NGJsonModel {
             .create();
 
     public static <T> T loadObjectFromJson(Path path, Class<T> clazz) throws IOException {
+        return loadObjectFromJson(path, clazz, null);
+    }
+
+    public static <T> T loadObjectFromJson(Path path, Class<T> clazz, Compressor compressor) throws IOException {
         if (!Files.exists(path)) {
             Files.createDirectories(path.getParent());
             Files.createFile(path);
         }
-        String json = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+        byte[] fileData = Files.readAllBytes(path);
+        if (compressor != null && fileData.length > 0) {
+            fileData = compressor.decompress(fileData);
+        }
+        String json = new String(fileData, StandardCharsets.UTF_8);
         return gson.fromJson(json, clazz);
     }
 
     public static <T> List<T> loadListObjectFromJson(Path path, Class<T> clazz) throws IOException {
+        return loadListObjectFromJson(path, clazz, null);
+    }
+
+    public static <T> List<T> loadListObjectFromJson(Path path, Class<T> clazz, Compressor compressor) throws IOException {
         if (!Files.exists(path)) {
             Files.createDirectories(path.getParent());
             Files.createFile(path);
         }
-        String json = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+        byte[] fileData = Files.readAllBytes(path);
+        if (compressor != null && fileData.length > 0) {
+            fileData = compressor.decompress(fileData);
+        }
+        String json = new String(fileData, StandardCharsets.UTF_8);
         Type listType = TypeToken.getParameterized(List.class, clazz).getType();
         return gson.fromJson(json, listType);
     }
 
     public static <T, V> Map<T, V> loadMapObjectFromJson(Path path, Class<T> keyClass, Class<V> valueClass) throws IOException {
+        return loadMapObjectFromJson(path, keyClass, valueClass, null);
+    }
+
+    public static <T, V> Map<T, V> loadMapObjectFromJson(Path path, Class<T> keyClass, Class<V> valueClass, Compressor compressor) throws IOException {
         if (!Files.exists(path)) {
             Files.createDirectories(path.getParent());
             Files.createFile(path);
         }
-        String json = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+        byte[] fileData = Files.readAllBytes(path);
+        if (compressor != null && fileData.length > 0) {
+            fileData = compressor.decompress(fileData);
+        }
+        String json = new String(fileData, StandardCharsets.UTF_8);
         Type mapType = TypeToken.getParameterized(Map.class, keyClass, valueClass).getType();
         return gson.fromJson(json, mapType);
     }
 
     public static void writeObjectToJson(Path path, Object object) throws IOException {
+        writeObjectToJson(path, object, null);
+    }
+
+    public static void writeObjectToJson(Path path, Object object, Compressor compressor) throws IOException {
         if (!Files.exists(path.getParent())) {
             Files.createDirectories(path.getParent());
         }
         String json = gson.toJson(object);
-        Files.write(path, json.getBytes(StandardCharsets.UTF_8));
+        byte[] data = json.getBytes(StandardCharsets.UTF_8);
+        if (compressor != null) {
+            data = compressor.compress(data);
+        }
+        Files.write(path, data);
     }
 
     public static Gson getGson() {
