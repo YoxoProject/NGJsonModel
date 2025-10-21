@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import fr.romaindu35.compression.Compressor;
 import fr.romaindu35.model.EnterpriseData;
+import fr.romaindu35.model.Halloween2025Data;
 import fr.romaindu35.model.PlayerListData;
 import fr.romaindu35.model.SkillData;
 
@@ -13,7 +14,6 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +29,11 @@ public class NGJsonModel {
             .registerTypeAdapter(PlayerListData.PlayerData.class, new PlayerListData.PlayerData.Deserializer())
             .registerTypeAdapter(PlayerListData.class, new PlayerListData.Serializer())
             .registerTypeAdapter(PlayerListData.class, new PlayerListData.Deserializer())
+
+            .registerTypeAdapter(Halloween2025Data.PlayerHalloweenData.class, new Halloween2025Data.PlayerHalloweenData.Serializer())
+            .registerTypeAdapter(Halloween2025Data.PlayerHalloweenData.class, new Halloween2025Data.PlayerHalloweenData.Deserializer())
+            .registerTypeAdapter(Halloween2025Data.class, new Halloween2025Data.Serializer())
+            .registerTypeAdapter(Halloween2025Data.class, new Halloween2025Data.Deserializer())
 
             .registerTypeAdapter(EnterpriseData.class, new EnterpriseData.Serializer())
             .registerTypeAdapter(EnterpriseData.class, new EnterpriseData.Deserializer())
