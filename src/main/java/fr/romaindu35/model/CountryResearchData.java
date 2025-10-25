@@ -1,5 +1,6 @@
 package fr.romaindu35.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -154,11 +155,13 @@ public class CountryResearchData {
         private final Integer level;
         private final Integer duration;
         private final List<String> conditions;
+        private final List<String> rewards; // Ajouté avec la version 1.0.9
 
-        public Level(Integer level, Integer duration, List<String> conditions) {
+        public Level(Integer level, Integer duration, List<String> conditions, List<String> rewards) {
             this.level = level;
             this.duration = duration;
             this.conditions = conditions;
+            this.rewards = rewards != null ? rewards : new ArrayList<String>(); // Permet de supporter les anciennes données sans récompenses
         }
 
         public Integer getLevel() {
@@ -173,12 +176,17 @@ public class CountryResearchData {
             return conditions;
         }
 
+        public List<String> getRewards() {
+            return rewards;
+        }
+
         @Override
         public String toString() {
             return "Level{" +
                     "level=" + level +
                     ", duration=" + duration +
                     ", conditions=" + conditions +
+                    ", rewards=" + rewards +
                     '}';
         }
     }
