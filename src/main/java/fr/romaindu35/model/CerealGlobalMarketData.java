@@ -1,12 +1,21 @@
 package fr.romaindu35.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
+
 import java.util.Map;
 
 /**
  * Données permettant de récupérer les données du marché mondial des céréales.
- *
+ * <p>
  * Pour pricesTexture, salesTexture et stocksTexture, il s'agit des graphiques générés par le serveur et encodés en Base64.
+ * <p>
+ * On ne viens pas optimiser le stockage car le poids des données n'est pas très important comparé à celui des images.
  */
+@AllArgsConstructor
+@Getter
+@ToString
 public class CerealGlobalMarketData implements BaseData {
 
     private final String server;
@@ -20,55 +29,4 @@ public class CerealGlobalMarketData implements BaseData {
     private final Map<String, Map<String, Double>> salesHistory;
     private final Map<String, Map<String, Double>> stocksHistory;
     private final Map<String, Integer> cerealsPrice;
-
-    public CerealGlobalMarketData(String server, Long timestamp, String pricesTexture, String salesTexture, String stocksTexture, Map<String, Map<String, Double>> pricesHistory, Map<String, Map<String, Double>> salesHistory, Map<String, Map<String, Double>> stocksHistory, Map<String, Integer> cerealsPrice) {
-        this.server = server;
-        this.timestamp = timestamp;
-        this.pricesTexture = pricesTexture;
-        this.salesTexture = salesTexture;
-        this.stocksTexture = stocksTexture;
-        this.pricesHistory = pricesHistory;
-        this.salesHistory = salesHistory;
-        this.stocksHistory = stocksHistory;
-        this.cerealsPrice = cerealsPrice;
-    }
-
-    @Override
-    public String getServer() {
-        return server;
-    }
-
-    @Override
-    public Long getTimestamp() {
-        return timestamp;
-    }
-
-    public String getPricesTexture() {
-        return pricesTexture;
-    }
-
-    public String getSalesTexture() {
-        return salesTexture;
-    }
-
-    public String getStocksTexture() {
-        return stocksTexture;
-    }
-
-    public Map<String, Map<String, Double>> getPricesHistory() {
-        return pricesHistory;
-    }
-
-    public Map<String, Map<String, Double>> getSalesHistory() {
-        return salesHistory;
-    }
-
-    public Map<String, Map<String, Double>> getStocksHistory() {
-        return stocksHistory;
-    }
-
-    public Map<String, Integer> getCerealsPrice() {
-        return cerealsPrice;
-    }
-
 }

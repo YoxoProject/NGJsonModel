@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'fr.romaindu35'
-version = '1.1.0'
+version = '1.2.0'
 
 // Chargement des variables d'environnement
 def envFile = file('.env')
@@ -35,6 +35,9 @@ repositories {
 dependencies {
     implementation "com.google.code.gson:gson:2.13.1"
     implementation "org.tukaani:xz:1.9"
+
+    compileOnly 'org.projectlombok:lombok:1.18.12'
+    annotationProcessor 'org.projectlombok:lombok:1.18.12'
 }
 
 publishing {
