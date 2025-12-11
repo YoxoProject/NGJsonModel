@@ -187,6 +187,29 @@ public class EnterpriseData implements BaseData {
         private EnterpriseBank bank;
 
         /**
+         * Permet de cloner une Enterprise de base. Cela est utilisé afin de créer les sous-classes sans perdre les données communes.
+         *
+         * @param enterprise: L'Enterprise de base à cloner.
+         */
+        public Enterprise(Enterprise enterprise) {
+            this.name = enterprise.name;
+            this.type = enterprise.type;
+            this.age = enterprise.age;
+            this.description = enterprise.description;
+            this.services = enterprise.services;
+            this.owner = enterprise.owner;
+            this.cadres = enterprise.cadres;
+            this.employees = enterprise.employees;
+            this.contractsDone = enterprise.contractsDone;
+            this.disputes = enterprise.disputes;
+            this.contractsSuccess = enterprise.contractsSuccess;
+            this.turnover = enterprise.turnover;
+            this.permissions = enterprise.permissions;
+            this.flag = enterprise.flag;
+            this.bank = enterprise.bank;
+        }
+
+        /**
          * Classe technique pour briser la récursion infinie de Gson.
          * Utilisée quand on veut désérialiser un "Enterprise" de base sans ré-invoquer le Deserializer.
          */
@@ -235,7 +258,6 @@ public class EnterpriseData implements BaseData {
     @Setter
     @ToString(callSuper = true)
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class EnterpriseBet extends Enterprise {
         @SerializedName("be")
         private List<Bet> bets = new ArrayList<>();
@@ -267,13 +289,20 @@ public class EnterpriseData implements BaseData {
             @SerializedName("s")
             private String status;
         }
+
+        public EnterpriseBet(Enterprise enterprise, List<Bet> bets, int betsRewardRedistributed, int betTotal, int betActive) {
+            super(enterprise);
+            this.bets = bets;
+            this.betsRewardRedistributed = betsRewardRedistributed;
+            this.betTotal = betTotal;
+            this.betActive = betActive;
+        }
     }
 
     @Getter
     @Setter
     @ToString(callSuper = true)
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class EnterpriseCasino extends Enterprise {
         @SerializedName("h")
         @JsonAdapter(CompactHistoryAdapter.class)
@@ -287,13 +316,21 @@ public class EnterpriseData implements BaseData {
         private Double winPercent;
         @SerializedName("tw")
         private Double totalWin;
+
+        public EnterpriseCasino(Enterprise enterprise, Map<String, Double> history, Double benefAverage, Double totalPlay, Double winPercent, Double totalWin) {
+            super(enterprise);
+            this.history = history;
+            this.benefAverage = benefAverage;
+            this.totalPlay = totalPlay;
+            this.winPercent = winPercent;
+            this.totalWin = totalWin;
+        }
     }
 
     @Getter
     @Setter
     @ToString(callSuper = true)
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class EnterpriseElectric extends Enterprise {
         @SerializedName("t")
         private Double total;
@@ -322,13 +359,27 @@ public class EnterpriseData implements BaseData {
         @SerializedName("hc")
         @JsonAdapter(CompactHistoryAdapter.class)
         private Map<String, Double> historyCollected = new HashMap<>();
+
+        public EnterpriseElectric(Enterprise other, Double total, Double available, boolean allowCountry, boolean allowAlly, boolean allowAll, String associatedCountry, Double price, Double priceAverage, Map<String, Double> countriesSell, Map<String, Double> historyGenerated, Map<String, Double> historyCollected) {
+            super(other);
+            this.total = total;
+            this.available = available;
+            this.allowCountry = allowCountry;
+            this.allowAlly = allowAlly;
+            this.allowAll = allowAll;
+            this.associatedCountry = associatedCountry;
+            this.price = price;
+            this.priceAverage = priceAverage;
+            this.countriesSell = countriesSell;
+            this.historyGenerated = historyGenerated;
+            this.historyCollected = historyCollected;
+        }
     }
 
     @Getter
     @Setter
     @ToString(callSuper = true)
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class EnterpriseFarm extends Enterprise {
         @SerializedName("h")
         @JsonAdapter(FarmHistoryAdapter.class)
@@ -340,13 +391,20 @@ public class EnterpriseData implements BaseData {
         private int todayCollected;
         @SerializedName("cc")
         private Map<String, Integer> collectedCereal = new HashMap<>();
+
+        public EnterpriseFarm(Enterprise enterprise, Map<String, Map<String, Double>> histories, int totalCollected, int todayCollected, Map<String, Integer> collectedCereal) {
+            super(enterprise);
+            this.histories = histories;
+            this.totalCollected = totalCollected;
+            this.todayCollected = todayCollected;
+            this.collectedCereal = collectedCereal;
+        }
     }
 
     @Getter
     @Setter
     @ToString(callSuper = true)
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class EnterpriseParcelle extends Enterprise {
         @SerializedName("pa")
         private List<Parcelle> parcelles = new ArrayList<>();
@@ -386,13 +444,17 @@ public class EnterpriseData implements BaseData {
             @SerializedName("z")
             private int z;
         }
+
+        public EnterpriseParcelle(Enterprise enterprise, List<Parcelle> parcelles) {
+            super(enterprise);
+            this.parcelles = parcelles;
+        }
     }
 
     @Getter
     @Setter
     @ToString(callSuper = true)
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class EnterprisePetrol extends Enterprise {
         @SerializedName("hg")
         @JsonAdapter(CompactHistoryAdapter.class)
@@ -418,13 +480,26 @@ public class EnterpriseData implements BaseData {
         private int price;
         @SerializedName("pa")
         private int priceAverage;
+
+        public EnterprisePetrol(Enterprise enterprise, Map<String, Double> historyGenerated, Map<String, Double> historyCollected, int total, int available, boolean allowCountry, boolean allowAlly, boolean allowAll, String associatedCountry, int price, int priceAverage) {
+            super(enterprise);
+            this.historyGenerated = historyGenerated;
+            this.historyCollected = historyCollected;
+            this.total = total;
+            this.available = available;
+            this.allowCountry = allowCountry;
+            this.allowAlly = allowAlly;
+            this.allowAll = allowAll;
+            this.associatedCountry = associatedCountry;
+            this.price = price;
+            this.priceAverage = priceAverage;
+        }
     }
 
     @Getter
     @Setter
     @ToString(callSuper = true)
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class EnterpriseTrader extends Enterprise {
         @SerializedName("h")
         @JsonAdapter(CompactHistoryAdapter.class)
@@ -438,6 +513,15 @@ public class EnterpriseData implements BaseData {
         private Float sumInvestment;
         @SerializedName("ti")
         private int totalInvestors;
+
+        public EnterpriseTrader(Enterprise enterprise, Map<String, Double> history, int totalGenerated, int todayPercent, Float sumInvestment, int totalInvestors) {
+            super(enterprise);
+            this.history = history;
+            this.totalGenerated = totalGenerated;
+            this.todayPercent = todayPercent;
+            this.sumInvestment = sumInvestment;
+            this.totalInvestors = totalInvestors;
+        }
     }
 
     @Getter
