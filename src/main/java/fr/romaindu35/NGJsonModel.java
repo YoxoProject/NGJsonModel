@@ -84,6 +84,28 @@ public class NGJsonModel {
                     return in.nextInt() != 0;
                 }
             })
+            .registerTypeAdapter(Boolean.class, new TypeAdapter<Boolean>() {
+                @Override
+                public void write(JsonWriter out, Boolean value) throws IOException {
+                    if (value == null || !value) {
+                        out.nullValue();
+                    } else {
+                        out.value(1);
+                    }
+                }
+
+                @Override
+                public Boolean read(JsonReader in) throws IOException {
+                    if (in.peek() == com.google.gson.stream.JsonToken.NULL) {
+                        in.nextNull();
+                        return false;
+                    }
+                    if (in.peek() == JsonToken.BOOLEAN) { // Gère le cas où la valeur est un booléen (ancienne version)
+                        return in.nextBoolean();
+                    }
+                    return in.nextInt() != 0;
+                }
+            })
             .registerTypeAdapter(EnterpriseData.Enterprise.class, new EnterpriseData.Enterprise.Deserializer()) // Permet de parser les différents types d'entreprises (CASINO, FARM, etc.)
             .create();
 
