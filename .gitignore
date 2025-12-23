@@ -44,3 +44,7 @@ bin/
 .env
 .idea/
 build
+
+test/
+benchmark_data/
+benchmark_results.csv

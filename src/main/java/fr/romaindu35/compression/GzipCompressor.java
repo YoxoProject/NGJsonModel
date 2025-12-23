@@ -61,4 +61,9 @@ public class GzipCompressor implements Compressor {
     public String getFileExtension() {
         return "gz";
     }
+
+    @Override
+    public String toString() {
+        return "Gzip";
+    }
 }

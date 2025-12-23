@@ -87,4 +87,9 @@ public class XZCompressor implements Compressor {
     public String getFileExtension() {
         return "xz";
     }
+
+    @Override
+    public String toString() {
+        return "XZ (Level " + compressionLevel + ")";
+    }
 }
