@@ -45,6 +45,6 @@ bin/
 .idea/
 build
 
-test/
+test/*.json
 benchmark_data/
 benchmark_results.csv
