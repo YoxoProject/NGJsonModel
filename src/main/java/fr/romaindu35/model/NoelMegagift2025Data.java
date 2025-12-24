@@ -3,6 +3,7 @@ package fr.romaindu35.model;
 import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class NoelMegagift2025Data implements BaseData {
 
     @SerializedName("s")
@@ -29,6 +31,7 @@ public class NoelMegagift2025Data implements BaseData {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
+    @EqualsAndHashCode
     public static class NoelMegagift2025Player {
         @SerializedName("u")
         private String username;
