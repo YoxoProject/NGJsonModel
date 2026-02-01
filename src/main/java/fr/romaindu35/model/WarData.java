@@ -203,6 +203,8 @@ public class WarData implements BaseData {
         PROVOCATION, // Provocation
         @SerializedName("te")
         TERRITORIAL_EXPANSION, // Expansion territoriale
+        @SerializedName("td")
+        TERRITORIAL_DEFENSE, // Défense territoriale
         @SerializedName("t")
         TREASON, // Trahison
         @SerializedName("i")
