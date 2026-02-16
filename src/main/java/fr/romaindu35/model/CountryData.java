@@ -148,6 +148,15 @@ public class CountryData implements BaseData {
 
         @SerializedName("s")
         private Settings settings;
+
+        @SerializedName("al")
+        private List<String> allies = new ArrayList<>();
+
+        @SerializedName("en")
+        private List<String> enemies = new ArrayList<>();
+
+        @SerializedName("ax")
+        private List<String> annexions = new ArrayList<>();
     }
 
     @Getter
@@ -158,6 +167,8 @@ public class CountryData implements BaseData {
     public static class FHomeCoord {
         @SerializedName("x")
         private int x;
+        @SerializedName("y")
+        private int y;
         @SerializedName("z")
         private int z;
     }
