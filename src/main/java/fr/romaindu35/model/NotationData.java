@@ -39,6 +39,12 @@ public class NotationData implements BaseData {
         @SerializedName("s")
         private String server;
 
+        @SerializedName("f")
+        private String from;
+
+        @SerializedName("t")
+        private String to;
+
         @SerializedName("a")
         private double activity;
 
