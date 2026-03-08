@@ -75,7 +75,7 @@ publishing {
     repositories {
         maven {
             name = 'Romaindu35_Maven'
-            url = "https://maven.romaindu35.fr/releases/"
+            url = "https://maven.yoxo.software/releases/"
             credentials {
                 username = getEnvOrProperty('MAVEN_USERNAME')
                 password = getEnvOrProperty('MAVEN_PASSWORD')
