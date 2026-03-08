@@ -48,7 +48,35 @@ public class PlayerListData implements BaseData {
         @SerializedName("pt")
         private int playtime;
 
+        @SerializedName("ptis")
+        private int playtimeInterserver;
+
         @SerializedName("l")
         private Long lastLogin;
+
+        @SerializedName("e")
+        private int enterprisesCount;
+
+        @SerializedName("s")
+        private Skill bestSkill;
+
+        @SerializedName("ip")
+        private boolean isPrime;
+
+        @SerializedName("g")
+        private String grade;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Skill {
+        @SerializedName("n")
+        private String name;
+
+        @SerializedName("l")
+        private int level;
     }
 }
