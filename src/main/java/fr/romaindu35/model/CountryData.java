@@ -71,6 +71,15 @@ public class CountryData implements BaseData {
         @SerializedName("irm")
         private boolean isRestrictMissile;
 
+        @SerializedName("ifb")
+        private boolean isFullBuild;
+
+        @SerializedName("iua")
+        private boolean isUnderAbsence;
+
+        @SerializedName("ien")
+        private boolean isEligibleForNotations;
+
         @SerializedName("l")
         private int level;
 
