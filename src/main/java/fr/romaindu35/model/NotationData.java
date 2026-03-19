@@ -143,6 +143,9 @@ public class NotationData implements BaseData {
         @SerializedName("or")
         private int organics;
 
+        @SerializedName("tr")
+        private int terraformingRealiste;
+
         @SerializedName("sc")
         private double surfaceConstruite;
 
