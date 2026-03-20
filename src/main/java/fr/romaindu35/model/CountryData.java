@@ -80,6 +80,12 @@ public class CountryData implements BaseData {
         @SerializedName("ien")
         private boolean isEligibleForNotations;
 
+        @SerializedName("id")
+        private boolean isDisbandable;
+
+        @SerializedName("dm")
+        private DisbandMessage disbandMessage;
+
         @SerializedName("l")
         private int level;
 
@@ -166,6 +172,26 @@ public class CountryData implements BaseData {
 
         @SerializedName("ax")
         private List<String> annexions = new ArrayList<>();
+    }
+
+    public enum DisbandMessage {
+        @SerializedName("not_enough_member")
+        NOT_ENOUGH_MEMBER,
+        @SerializedName("warning_not_enough_member")
+        WARNING_NOT_ENOUGH_MEMBER,
+
+        @SerializedName("no_home_defined")
+        NO_HOME_DEFINED,
+        @SerializedName("warning_no_home_defined")
+        WARNING_NO_HOME_DEFINED,
+
+        @SerializedName("inactivity")
+        INACTIVITY,
+        @SerializedName("warning_inactivity")
+        WARNING_INACTIVITY,
+
+        @SerializedName("leader_officers_afk_14_days")
+        LEADER_OFFICERS_AFK_14_DAYS,
     }
 
     @Getter
